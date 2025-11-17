@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石家庄天气预报</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, #1a2980, #26d0ce);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .current-date {
+            margin-top: 10px;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .weather-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .current-weather {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .temperature {
+            font-size: 5rem;
+            font-weight: 300;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .temperature span {
+            font-size: 2rem;
+            margin-top: 10px;
+        }
+        
+        .weather-icon {
+            font-size: 4rem;
+            margin: 15px 0;
+        }
+        
+        .weather-description {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .weather-details {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 15px;
+            border-radius: 10px;
+        }
+        
+        .detail-item i {
+            font-size: 1.2rem;
+            margin-right: 10px;
+            width: 25px;
+        }
+        
+        .forecast {
+            flex: 2;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .forecast h2 {
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .forecast h2 i {
+            margin-right: 10px;
+        }
+        
+        .forecast-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .forecast-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .forecast-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .forecast-day {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .forecast-date {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .forecast-icon {
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+        
+        .forecast-temp {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .forecast-description {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        
+        .additional-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .info-card h3 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .info-card h3 i {
+            margin-right: 10px;
+        }
+        
+        .air-quality {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .aqi-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        
+        .aqi-level {
+            font-size: 1.2rem;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: rgba(46, 204, 113, 0.3);
+        }
+        
+        .hourly-forecast {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 10px;
+        }
+        
+        .hourly-item {
+            display: inline-block;
+            text-align: center;
+            padding: 15px;
+            margin-right: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            min-width: 80px;
+        }
+        
+        .hourly-time {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .hourly-temp {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .weather-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .temperature {
+                font-size: 4rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .weather-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .forecast-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>石家庄天气预报</h1>
+            <p class="subtitle">实时天气信息与未来天气预报</p>
+            <p class="current-date" id="current-date">2023年11月15日 星期三</p>
+        </header>
+        
+        <div class="weather-container">
+            <div class="current-weather">
+                <h2>当前天气</h2>
+                <div class="weather-icon">☀️</div>
+                <div class="temperature">21<span>°C</span></div>
+                <div class="weather-description">大部地区晴朗</div>
+                
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <i class="fas fa-wind"></i>
+                        <div>风速: 8 km/h</div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-tint"></i>
+                        <div>湿度: 40%</div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-compass"></i>
+                        <div>风向: 西南风</div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-sun"></i>
+                        <div>紫外线: 中等</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="forecast">
+                <h2><i class="fas fa-calendar-alt"></i> 未来几天预报</h2>
+                <div class="forecast-list">
+                    <div class="forecast-item">
+                        <div class="forecast-day">周六</div>
+                        <div class="forecast-date">11月15日</div>
+                        <div class="forecast-icon">☀️</div>
+                        <div class="forecast-temp">21°C</div>
+                        <div class="forecast-description">大部晴朗</div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-day">周日</div>
+                        <div class="forecast-date">11月16日</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">12°C</div>
+                        <div class="forecast-description">局部多云</div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-day">周一</div>
+                        <div class="forecast-date">11月17日</div>
+                        <div class="forecast-icon">☀️</div>
+                        <div class="forecast-temp">8°C</div>
+                        <div class="forecast-description">晴朗</div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-day">周二</div>
+                        <div class="forecast-date">11月18日</div>
+                        <div class="forecast-icon">☀️</div>
+                        <div class="forecast-temp">14°C</div>
+                        <div class="forecast-description">晴朗</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="additional-info">
+            <div class="info-card">
+                <h3><i class="fas fa-wind"></i> 空气质量</h3>
+                <div class="air-quality">
+                    <div class="aqi-value">65</div>
+                    <div class="aqi-level">良好</div>
+                </div>
+                <p>PM2.5: 35 μg/m³</p>
+                <p>主要污染物: 细颗粒物(PM2.5)</p>
+            </div>
+            
+            <div class="info-card">
+                <h3><i class="fas fa-sun"></i> 日出日落</h3>
+                <p>日出: 06:58</p>
+                <p>日落: 17:10</p>
+                <p>日照时长: 10小时12分钟</p>
+            </div>
+            
+            <div class="info-card">
+                <h3><i class="fas fa-temperature-high"></i> 24小时预报</h3>
+                <div class="hourly-forecast">
+                    <div class="hourly-item">
+                        <div class="hourly-time">现在</div>
+                        <div class="hourly-icon">☀️</div>
+                        <div class="hourly-temp">21°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">14:00</div>
+                        <div class="hourly-icon">☀️</div>
+                        <div class="hourly-temp">20°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">16:00</div>
+                        <div class="hourly-icon">☀️</div>
+                        <div class="hourly-temp">19°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">18:00</div>
+                        <div class="hourly-icon">🌙</div>
+                        <div class="hourly-temp">15°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">20:00</div>
+                        <div class="hourly-icon">🌙</div>
+                        <div class="hourly-temp">12°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">22:00</div>
+                        <div class="hourly-icon">🌙</div>
+                        <div class="hourly-temp">9°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">00:00</div>
+                        <div class="hourly-icon">🌙</div>
+                        <div class="hourly-temp">7°</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>数据来源：天气信息综合整理 | 最后更新：2023年11月15日 10:30</p>
+            <p>© 2023 石家庄天气信息页面</p>
+        </footer>
+    </div>
+
+    <script>
+        // 设置当前日期
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN', options);
+        
+        // 添加一些简单的交互效果
+        document.querySelectorAll('.forecast-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // 简单的点击效果
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
